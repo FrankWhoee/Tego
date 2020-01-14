@@ -3,7 +3,7 @@ from ete3 import Tree
 
 def trimNode(node: Tree, prevLength=0):
     for child in node.get_children():
-        if child.dist + prevLength >= 2:
+        if child.dist + prevLength >= 12:
             delDescendants(child)
         else:
             trimNode(child, prevLength=prevLength + child.dist)
@@ -13,11 +13,15 @@ def delDescendants(node:Tree):
         desc.delete()
 
 def getSuccess(node:Tree, prevLength=0):
+    print("-----------------------INPUT----------------------")
     trainNode = node.copy()
     trimNode(trainNode)
+    print(trainNode)
     initial = len(trainNode.get_descendants()) + 1
     future = node.copy()
     getSuccessHelper(future)
+    print("-----------------------FUTURE----------------------")
+    print(future)
     final = len(future.get_descendants()) + 1
     return final/initial
 
@@ -30,7 +34,7 @@ def getSuccessHelper(node:Tree, prevLength=0):
     :return:
     """
     for child in node.get_children():
-        if child.dist + prevLength > 20:
+        if child.dist + prevLength > 3.4:
             delDescendants(child)
         else:
             trimNode(child, prevLength=prevLength + child.dist)
