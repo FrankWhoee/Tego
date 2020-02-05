@@ -12,6 +12,10 @@ from keras.models import Model
 from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 from spektral.layers import EdgeConditionedConv, GlobalAvgPool
+import gc
+
+print("Imported packages.")
+
 
 def nwkToNumpy(path) -> (np.ndarray, np.ndarray):
     tree = Phylo.read(path, "newick")
@@ -25,20 +29,45 @@ def getData(path="subtrees"):
     y = []
     adj = []
     edg = []
-    for f in os.listdir(path):
-        y.append(re.search("\((.*?)\)", f).group()[1:-1])
+    i = 0
+    files = os.listdir(path)
+    for f in files:
+        # print("Get " + str(i) + " out of " + str(len(files) - 1))
         A, E = nwkToNumpy('subtrees/' + f)
-        adj.append(A)
-        edg.append(E)
+        if A.shape[0] <= 600:
+            adj.append(A)
+            edg.append(E)
+            y.append(re.search("\((.*?)\)", f).group()[1:-1])
 
+        i += 1
+    print("Files read. Padding them for training.")
     k = max([_.shape[-1] for _ in adj])
-    adj = pad_jagged_array(adj, (k, k))
-    edg = pad_jagged_array(edg, (k, k, -1))
+    for i in range(len(adj)):
+        matrix = adj[i]
+        temp = np.zeros((k, k))
+        temp[:matrix.shape[0], :matrix.shape[1]] = matrix
+        adj[i] = temp
+    print("Adj Padded.")
+    for i in range(len(edg)):
+        matrix = edg[i]
+        temp = np.zeros((k, k, 1))
+        temp[:matrix.shape[0], :matrix.shape[1]] = matrix
+        edg[i] = temp
+    print("Edg Padded.")
+
+    print("Stacking arrays")
+    adj = np.stack(adj)
+    gc.collect()
+    print("Finish adj stack")
+    edg = np.stack(edg)
+    gc.collect()
+    print("Finish edg stack")
+    y = np.array(y)
     return adj, edg, y
 
 
 A, E, y = getData()
-
+print("Data acquired")
 # Parameters
 N = A.shape[1]  # Number of nodes in the graphs
 S = E.shape[3]  # Edge features dimensionality
@@ -53,23 +82,24 @@ A_train, A_test, \
 X_train, X_test, \
 E_train, E_test, \
 y_train, y_test = train_test_split(A, E, y, test_size=0.1)
-
+print("Training/testing split.")
 # Model definition
 A_in = Input(shape=(N, N))
 E_in = Input(shape=(N, N, S))
-
+print("Model input defined")
 gc1 = EdgeConditionedConv(32, activation='relu')([A_in, E_in])
 gc2 = EdgeConditionedConv(32, activation='relu')([gc1, A_in, E_in])
 pool = GlobalAvgPool()(gc2)
 output = Dense(n_out)(pool)
-
+print("Rest of model is defined.")
 # Build model
 model = Model(inputs=[A_in, E_in], outputs=output)
 optimizer = Adam(lr=learning_rate)
 model.compile(optimizer=optimizer, loss='mse')
 model.summary()
-
+print("Model built.")
 # Train model
+print("Training model...")
 model.fit([X_train, A_train, E_train],
           y_train,
           batch_size=batch_size,
