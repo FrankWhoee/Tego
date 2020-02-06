@@ -55,8 +55,7 @@ def getData(path="subtrees"):
         matrix = nod[i]
         temp = np.full((k, matrix.shape[1]), -1)
         temp[:matrix.shape[0], :matrix.shape[1]] = matrix
-        edg[i] = temp
-        print((k, matrix.shape[1]))
+        nod[i] = temp
     print("Nod Padded.")
 
     print("Stacking arrays")

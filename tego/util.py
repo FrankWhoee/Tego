@@ -65,6 +65,7 @@ def to_node_attributes(path) -> np.ndarray:
         "RBS adjacent mutations": 6
     }
     node = Tree(path, format=3)
+    print(node)
     node_arr = node.get_children().copy()
     node_arr.append(node)
     for child in node_arr:
