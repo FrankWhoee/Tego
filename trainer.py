@@ -108,7 +108,8 @@ model.fit([e_train, A_train],
           epochs=epochs,
           callbacks=[
               EarlyStopping(patience=es_patience, restore_best_weights=True)
-          ])
+          ],
+          verbose=2)
 
 # Evaluate model
 print('Evaluating model.')
