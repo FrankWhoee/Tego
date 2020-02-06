@@ -2,7 +2,7 @@ import numpy as np
 from Bio import Phylo
 from ete3 import Tree
 from meta import get as mget
-
+import math
 
 def to_distance_matrix(tree) -> np.ndarray:
     """Create a distance matrix (NumPy array) from clades/branches in tree.
@@ -71,7 +71,10 @@ def to_node_attributes(path) -> np.ndarray:
                            "Local branching index", "Non-epitope mutations", "ne_star", "RBS adjacent mutations"])
         node_matrix = np.full(7, -1)
         for key in attributes.keys():
-            node_matrix[index_map[key]] = attributes[key]
+            if math.isnan(attributes[key]):
+                node_matrix[index_map[key]] = -1
+            else:
+                node_matrix[index_map[key]] = attributes[key]
         result.append(node_matrix)
     return np.stack(result)
 
