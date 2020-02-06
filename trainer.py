@@ -94,7 +94,7 @@ output = Dense(n_classes, activation='softmax')(pool)
 # Build model
 model = Model(inputs=[X_in, A_in], outputs=output)
 optimizer = Adam(lr=learning_rate)
-model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['acc'])
+model.compile(optimizer=optimizer, loss='sparse_categorical_crossentropy', metrics=['acc'])
 model.summary()
 
 # Train model
