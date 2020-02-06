@@ -17,7 +17,7 @@ def to_distance_matrix(tree) -> np.ndarray:
     lookup = {}
     for i, elem in enumerate(allclades):
         lookup[elem] = i
-    distmat = np.repeat(np.inf, len(allclades) ** 2)
+    distmat = np.repeat(-1, len(allclades) ** 2)
     distmat.shape = (len(allclades), len(allclades))
     for parent in tree.find_clades(terminal=False, order='level'):
         for child in parent.clades:
