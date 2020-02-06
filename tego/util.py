@@ -66,6 +66,7 @@ def to_node_attributes(path) -> np.ndarray:
     }
     node = Tree(path, format=3)
     for child in node.get_children():
+        print(child.name)
         attributes = mget(child.name,
                           ["Antigenic advance (tree model)", "Antigenic advance (sub model)", "Epitope mutations",
                            "Local branching index", "Non-epitope mutations", "ne_star", "RBS adjacent mutations"])
