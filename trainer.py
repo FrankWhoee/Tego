@@ -86,8 +86,14 @@ print("Training/testing split.")
 E_in = Input(shape=(N, S))
 A_in = Input((N, N))
 
-gc1 = GraphConv(32, activation='relu', kernel_regularizer=l2(l2_reg))(E_in)
-gc2 = GraphConv(32, activation='relu', kernel_regularizer=l2(l2_reg))(A_in)
+gc1 = GraphConv(32,
+                         activation='relu',
+                         kernel_regularizer=l2(l2_reg),
+                         use_bias=False)(E_in)
+gc2 = GraphConv(32,
+                         activation='relu',
+                         kernel_regularizer=l2(l2_reg),
+                         use_bias=False)(A_in)
 pool = GlobalMaxPool(128)([gc1, gc2])
 
 dense1 = Dense(64)(pool)
