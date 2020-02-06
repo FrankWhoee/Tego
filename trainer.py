@@ -79,7 +79,6 @@ es_patience = 5  # Patience fot early stopping
 
 # Train/test split
 A_train, A_test, \
-X_train, X_test, \
 E_train, E_test, \
 y_train, y_test = train_test_split(A, E, y, test_size=0.1)
 print("Training/testing split.")
