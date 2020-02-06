@@ -74,7 +74,7 @@ def getData(path="subtrees"):
 A, X, E, y = getData()
 print("Data acquired")
 # Parameters
-N = X.shape[-2]  # Number of nodes in the graphs
+N = A.shape[1]  # Number of nodes in the graphs
 F = X.shape[-1]  # Node features dimensionality
 S = E.shape[-1]  # Edge features dimensionality
 n_out = 2  # Dimensionality of the target
