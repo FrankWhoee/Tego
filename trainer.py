@@ -51,7 +51,7 @@ def getData(path="subtrees"):
     print("Adj Padded.")
     for i in range(len(edg)):
         matrix = edg[i]
-        temp = np.zeros((k, k, 1))
+        temp = np.zeros((k, k))
         temp[:matrix.shape[0], :matrix.shape[1]] = matrix
         edg[i] = temp
     print("Edg Padded.")
