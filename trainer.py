@@ -22,7 +22,7 @@ def nwkToNumpy(path) -> (np.ndarray, np.ndarray):
     tree = Phylo.read(path, "newick")
     A = to_adjacency_matrix(tree)
     E = to_distance_matrix(tree)
-    E = np.reshape(E, (E.shape[0], E.shape[1], 1))
+    # E = np.reshape(E, (E.shape[0], E.shape[1], 1))
     return A, E
 
 
