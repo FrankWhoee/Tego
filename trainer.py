@@ -1,18 +1,19 @@
 import numpy as np
 from Bio import Phylo
-from spektral.utils.misc import pad_jagged_array
 import os
 import re
 from tego.util import to_adjacency_matrix, to_distance_matrix
-import matplotlib.pyplot as plt
 import numpy as np
+import gc
 from keras.callbacks import EarlyStopping
 from keras.layers import Input, Dense
 from keras.models import Model
 from keras.optimizers import Adam
+from keras.regularizers import l2
 from sklearn.model_selection import train_test_split
-from spektral.layers import EdgeConditionedConv, GlobalAvgPool
-import gc
+
+from spektral.datasets import delaunay
+from spektral.layers import GraphAttention, GlobalAttentionPool
 
 print("Imported packages.")
 
@@ -71,35 +72,37 @@ print("Data acquired")
 # Parameters
 N = A.shape[1]  # Number of nodes in the graphs
 S = E.shape[3]  # Edge features dimensionality
-n_out = y.shape[-1]  # Dimensionality of the target
-learning_rate = 1e-3  # Learning rate for SGD
-epochs = 25  # Number of training epochs
-batch_size = 32  # Batch size
-es_patience = 5  # Patience fot early stopping
+n_classes = y.shape[-1]  # Number of classes
+l2_reg = 5e-4            # Regularization rate for l2
+learning_rate = 1e-3     # Learning rate for Adam
+epochs = 20000           # Number of training epochs
+batch_size = 32          # Batch size
+es_patience = 200        # Patience fot early stopping
 
 # Train/test split
 A_train, A_test, \
-E_train, E_test, \
+e_train, e_test, \
 y_train, y_test = train_test_split(A, E, y, test_size=0.1)
 print("Training/testing split.")
+
 # Model definition
-A_in = Input(shape=(N, N))
-E_in = Input(shape=(N, N, S))
-print("Model input defined")
-gc1 = EdgeConditionedConv(32, activation='relu')([A_in, E_in])
-gc2 = EdgeConditionedConv(32, activation='relu')([gc1, A_in, E_in])
-pool = GlobalAvgPool()(gc2)
-output = Dense(n_out)(pool)
-print("Rest of model is defined.")
+E_in = Input(shape=(N, S))
+A_in = Input((N, N))
+
+gc1 = GraphAttention(32, activation='relu', kernel_regularizer=l2(l2_reg))([E_in, A_in])
+gc2 = GraphAttention(32, activation='relu', kernel_regularizer=l2(l2_reg))([gc1, A_in])
+pool = GlobalAttentionPool(128)(gc2)
+
+output = Dense(n_classes, activation='softmax')(pool)
+
 # Build model
-model = Model(inputs=[A_in, E_in], outputs=output)
+model = Model(inputs=[E_in, A_in], outputs=output)
 optimizer = Adam(lr=learning_rate)
-model.compile(optimizer=optimizer, loss='mse')
+model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['acc'])
 model.summary()
-print("Model built.")
+
 # Train model
-print("Training model...")
-model.fit([X_train, A_train, E_train],
+model.fit([e_train, A_train],
           y_train,
           batch_size=batch_size,
           validation_split=0.1,
@@ -110,18 +113,9 @@ model.fit([X_train, A_train, E_train],
 
 # Evaluate model
 print('Evaluating model.')
-eval_results = model.evaluate([X_test, A_test, E_test],
+eval_results = model.evaluate([e_test, A_test],
                               y_test,
                               batch_size=batch_size)
 print('Done.\n'
-      'Test loss: {}'.format(eval_results))
-
-# Plot predictions
-preds = model.predict([X_test, A_test, E_test])
-
-plt.figure()
-plt.scatter(preds, y_test, alpha=0.3)
-plt.plot(range(-6, 6), range(-6, 6))
-plt.xlabel('Predicted')
-plt.ylabel('Actual')
-plt.savefig('pred_v_true.png')
+      'Test loss: {}\n'
+      'Test accuracy: {}'.format(*eval_results))
