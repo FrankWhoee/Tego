@@ -12,7 +12,7 @@ from keras.optimizers import Adam
 from keras.regularizers import l2
 from sklearn.model_selection import train_test_split
 from spektral.layers import GraphConv, GlobalMaxPool
-
+import spektral.utils as utils
 print("Imported packages.")
 
 
@@ -82,18 +82,15 @@ e_train, e_test, \
 y_train, y_test = train_test_split(A, E, y, test_size=0.1)
 print("Training/testing split.")
 
-# Model definition
-E_in = Input(shape=(N, S))
-A_in = Input((N, N))
+A = utils.localpooling_filter(A)
+E = utils.localpooling_filter(E)
 
-gc1 = GraphConv(32,
-                         activation='relu',
-                         kernel_regularizer=l2(l2_reg),
-                         use_bias=False)(E_in)
-gc2 = GraphConv(32,
-                         activation='relu',
-                         kernel_regularizer=l2(l2_reg),
-                         use_bias=False)(A_in)
+# Model definition
+E_in = Input(shape=(N, S), sparse=True)
+A_in = Input((N, N), sparse=True)
+
+gc1 = GraphConv(16, activation='relu', kernel_regularizer=l2(l2_reg), use_bias=False)(E_in)
+gc2 = GraphConv(16, activation='relu', kernel_regularizer=l2(l2_reg), use_bias=False)(A_in)
 pool = GlobalMaxPool(128)([gc1, gc2])
 
 dense1 = Dense(64)(pool)
