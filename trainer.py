@@ -50,7 +50,6 @@ def getData(path="subtrees"):
         temp[:matrix.shape[0], :matrix.shape[1]] = matrix
         edg[i] = temp
     print("Edg Padded.")
-    k = max([_.shape[0] for _ in nod])
     for i in range(len(nod)):
         matrix = nod[i]
         temp = np.full((k, matrix.shape[1]), -1)
@@ -74,7 +73,7 @@ def getData(path="subtrees"):
 A, X, E, y = getData()
 print("Data acquired")
 # Parameters
-N = A.shape[1]  # Number of nodes in the graphs
+N = X.shape[-2]  # Number of nodes in the graphs
 F = X.shape[-1]  # Node features dimensionality
 S = E.shape[-1]  # Edge features dimensionality
 n_out = 2  # Dimensionality of the target
