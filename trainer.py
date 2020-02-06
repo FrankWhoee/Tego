@@ -101,8 +101,7 @@ output = Dense(n_out)(pool)
 
 # Build model
 model = Model(inputs=[X_in, A_in, E_in], outputs=output)
-optimizer = Adam(lr=learning_rate)
-model.compile(optimizer=optimizer, loss='sparse_categorical_crossentropy')
+model.compile(optimizer='Adam', loss='sparse_categorical_crossentropy')
 model.summary()
 
 # Train model
