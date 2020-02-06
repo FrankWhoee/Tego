@@ -71,7 +71,7 @@ A, E, y = getData()
 print("Data acquired")
 # Parameters
 N = A.shape[1]  # Number of nodes in the graphs
-S = 1  # Edge features dimensionality
+S = N  # Edge features dimensionality
 n_classes = y.shape[-1]  # Number of classes
 l2_reg = 5e-4            # Regularization rate for l2
 learning_rate = 1e-3     # Learning rate for Adam
