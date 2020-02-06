@@ -11,7 +11,7 @@ from keras.models import Model
 from keras.optimizers import Adam
 from keras.regularizers import l2
 from sklearn.model_selection import train_test_split
-from spektral.layers import GraphConv, GlobalMaxPool, Dropout
+from spektral.layers import GraphConv, GlobalMaxPool, Dropout, GraphAttention, GlobalAttentionPool
 import spektral.utils as utils
 print("Imported packages.")
 
@@ -70,46 +70,35 @@ print("Data acquired")
 N = A.shape[1]  # Number of nodes in the graphs
 S = N  # Edge features dimensionality
 n_classes = 2
-batch_size = 32
-dropout = 0.5           # Dropout rate applied to the features
-l2_reg = 5e-4           # Regularization rate for l2
-learning_rate = 1e-2    # Learning rate for SGD
-epochs = 20000          # Number of training epochs
-es_patience = 200       # Patience for early stopping
-
-
-A = utils.localpooling_filter(A)
-E = utils.localpooling_filter(E)
+l2_reg = 5e-4            # Regularization rate for l2
+learning_rate = 1e-3     # Learning rate for Adam
+epochs = 20000           # Number of training epochs
+batch_size = 32          # Batch size
+es_patience = 200        # Patience fot early stopping
 
 # Train/test split
 A_train, A_test, \
-e_train, e_test, \
+x_train, x_test, \
 y_train, y_test = train_test_split(A, E, y, test_size=0.1)
-print("Training/testing split.")
-
-
 
 # Model definition
-E_in = Input(shape=(N, S), sparse=True)
-A_in = Input(shape=(N, N), sparse=True)
-dropout_1 = Dropout(dropout)(A_in)
-gc1 = GraphConv(16, activation='relu', kernel_regularizer=l2(l2_reg), use_bias=False)(dropout_1, E_in)
-gc2 = GraphConv(16, activation='relu', kernel_regularizer=l2(l2_reg), use_bias=False)(A_in)
-pool = GlobalMaxPool(128)([gc1, gc2])
+X_in = Input(shape=(N, N))
+A_in = Input((N, N))
 
-dense1 = Dense(64)(pool)
-dense1 = Dense(32)(pool)
+gc1 = GraphAttention(32, activation='relu', kernel_regularizer=l2(l2_reg))([X_in, A_in])
+gc2 = GraphAttention(32, activation='relu', kernel_regularizer=l2(l2_reg))([gc1, A_in])
+pool = GlobalAttentionPool(128)(gc2)
 
 output = Dense(n_classes, activation='softmax')(pool)
 
 # Build model
-model = Model(inputs=[E_in, A_in], outputs=output)
+model = Model(inputs=[X_in, A_in], outputs=output)
 optimizer = Adam(lr=learning_rate)
-model.compile(optimizer=optimizer, loss='sparse_categorical_crossentropy', metrics=['acc'])
+model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['acc'])
 model.summary()
 
 # Train model
-model.fit([e_train, A_train],
+model.fit([x_train, A_train],
           y_train,
           batch_size=batch_size,
           validation_split=0.1,
@@ -120,7 +109,7 @@ model.fit([e_train, A_train],
 
 # Evaluate model
 print('Evaluating model.')
-eval_results = model.evaluate([e_test, A_test],
+eval_results = model.evaluate([x_test, A_test],
                               y_test,
                               batch_size=batch_size)
 print('Done.\n'
