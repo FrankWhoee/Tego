@@ -11,6 +11,7 @@ from keras.models import Model
 from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 from spektral.layers import EdgeConditionedConv, GlobalAvgPool
+
 print("Imported packages.")
 
 
@@ -49,12 +50,20 @@ def getData(path="subtrees"):
         temp[:matrix.shape[0], :matrix.shape[1]] = matrix
         edg[i] = temp
     print("Edg Padded.")
+    k = max([_.shape[0] for _ in nod])
+    for i in range(len(nod)):
+        matrix = nod[i]
+        temp = np.full((k, matrix.shape[1]), -1)
+        temp[:matrix.shape[0], :matrix.shape[1]] = matrix
+        edg[i] = temp
+    print("Nod Padded.")
 
     print("Stacking arrays")
     adj = np.stack(adj)
     gc.collect()
     print("Finish adj stack")
     edg = np.stack(edg)
+    edg.reshape((edg.shape[0], edg.shape[1], edg.shape[2], 1))
     gc.collect()
     print("Finish edg stack")
     nod = np.stack(nod)
@@ -65,14 +74,14 @@ def getData(path="subtrees"):
 A, X, E, y = getData()
 print("Data acquired")
 # Parameters
-N = X.shape[-2]           # Number of nodes in the graphs
-F = X.shape[-1]           # Node features dimensionality
-S = E.shape[-1]           # Edge features dimensionality
-n_out = 2                 # Dimensionality of the target
-learning_rate = 1e-3      # Learning rate for SGD
-epochs = 25               # Number of training epochs
-batch_size = 32           # Batch size
-es_patience = 5           # Patience fot early stopping
+N = X.shape[-2]  # Number of nodes in the graphs
+F = X.shape[-1]  # Node features dimensionality
+S = E.shape[-1]  # Edge features dimensionality
+n_out = 2  # Dimensionality of the target
+learning_rate = 1e-3  # Learning rate for SGD
+epochs = 25  # Number of training epochs
+batch_size = 32  # Batch size
+es_patience = 5  # Patience fot early stopping
 
 # Train/test split
 A_train, A_test, \
@@ -103,7 +112,7 @@ model.fit([X_train, A_train, E_train],
           validation_split=0.1,
           epochs=epochs,
           callbacks=[
-              EarlyStopping(patience=es_patience,  restore_best_weights=True)
+              EarlyStopping(patience=es_patience, restore_best_weights=True)
           ])
 
 # Evaluate model
