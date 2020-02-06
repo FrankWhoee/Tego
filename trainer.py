@@ -80,7 +80,7 @@ S = E.shape[-1]  # Edge features dimensionality
 n_out = 2  # Dimensionality of the target
 learning_rate = 1e-3  # Learning rate for SGD
 epochs = 25  # Number of training epochs
-batch_size = 32  # Batch size
+batch_size = 8  # Batch size
 es_patience = 5  # Patience fot early stopping
 
 # Train/test split
