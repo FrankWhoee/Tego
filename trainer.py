@@ -11,7 +11,7 @@ from keras.models import Model
 from keras.optimizers import Adam
 from keras.regularizers import l2
 from sklearn.model_selection import train_test_split
-from spektral.layers import GraphConv, GlobalMaxPool
+from spektral.layers import GraphConv, GlobalMaxPool, Dropout
 import spektral.utils as utils
 print("Imported packages.")
 
@@ -69,6 +69,8 @@ print("Data acquired")
 # Parameters
 N = A.shape[1]  # Number of nodes in the graphs
 S = N  # Edge features dimensionality
+n_classes = 2
+batch_size = 32
 dropout = 0.5           # Dropout rate applied to the features
 l2_reg = 5e-4           # Regularization rate for l2
 learning_rate = 1e-2    # Learning rate for SGD
@@ -90,8 +92,8 @@ print("Training/testing split.")
 # Model definition
 E_in = Input(shape=(N, S), sparse=True)
 A_in = Input(shape=(N, N), sparse=True)
-
-gc1 = GraphConv(16, activation='relu', kernel_regularizer=l2(l2_reg), use_bias=False)(E_in)
+dropout_1 = Dropout(dropout)(A_in)
+gc1 = GraphConv(16, activation='relu', kernel_regularizer=l2(l2_reg), use_bias=False)(dropout_1, E_in)
 gc2 = GraphConv(16, activation='relu', kernel_regularizer=l2(l2_reg), use_bias=False)(A_in)
 pool = GlobalMaxPool(128)([gc1, gc2])
 
