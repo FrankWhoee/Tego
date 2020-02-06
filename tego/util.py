@@ -77,6 +77,7 @@ def to_node_attributes(path) -> np.ndarray:
             else:
                 node_matrix[index_map[key]] = attributes[key]
         result.append(node_matrix)
+    print(result)
     return np.stack(result)
 
 
