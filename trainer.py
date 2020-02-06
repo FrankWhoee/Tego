@@ -11,9 +11,7 @@ from keras.models import Model
 from keras.optimizers import Adam
 from keras.regularizers import l2
 from sklearn.model_selection import train_test_split
-
-from spektral.datasets import delaunay
-from spektral.layers import GraphAttention, GlobalAttentionPool
+from spektral.layers import GraphConv, GlobalMaxPool
 
 print("Imported packages.")
 
@@ -72,11 +70,11 @@ print("Data acquired")
 N = A.shape[1]  # Number of nodes in the graphs
 S = N  # Edge features dimensionality
 n_classes = 2  # Number of classes
-l2_reg = 5e-4            # Regularization rate for l2
-learning_rate = 1e-3     # Learning rate for Adam
-epochs = 20000           # Number of training epochs
-batch_size = 32          # Batch size
-es_patience = 200        # Patience fot early stopping
+l2_reg = 5e-4  # Regularization rate for l2
+learning_rate = 1e-3  # Learning rate for Adam
+epochs = 20000  # Number of training epochs
+batch_size = 32  # Batch size
+es_patience = 200  # Patience fot early stopping
 
 # Train/test split
 A_train, A_test, \
@@ -88,9 +86,12 @@ print("Training/testing split.")
 E_in = Input(shape=(N, S))
 A_in = Input((N, N))
 
-gc1 = GraphAttention(32, activation='relu', kernel_regularizer=l2(l2_reg))([E_in, A_in])
-gc2 = GraphAttention(32, activation='relu', kernel_regularizer=l2(l2_reg))([gc1, A_in])
-pool = GlobalAttentionPool(128)(gc2)
+gc1 = GraphConv(32, activation='relu', kernel_regularizer=l2(l2_reg))(E_in)
+gc2 = GraphConv(32, activation='relu', kernel_regularizer=l2(l2_reg))(A_in)
+pool = GlobalMaxPool(128)([gc1, gc2])
+
+dense1 = Dense(64)(pool)
+dense1 = Dense(32)(pool)
 
 output = Dense(n_classes, activation='softmax')(pool)
 
@@ -108,8 +109,7 @@ model.fit([e_train, A_train],
           epochs=epochs,
           callbacks=[
               EarlyStopping(patience=es_patience, restore_best_weights=True)
-          ],
-          verbose=2)
+          ])
 
 # Evaluate model
 print('Evaluating model.')
