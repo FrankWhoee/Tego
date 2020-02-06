@@ -35,10 +35,9 @@ def getData(path="subtrees"):
     for f in files:
         # print("Get " + str(i) + " out of " + str(len(files) - 1))
         A, E = nwkToNumpy('subtrees/' + f)
-        if A.shape[0] <= 1600:
-            adj.append(A)
-            edg.append(E)
-            y.append(re.search("\((.*?)\)", f).group()[1:-1])
+        adj.append(A)
+        edg.append(E)
+        y.append(re.search("\((.*?)\)", f).group()[1:-1])
 
         i += 1
     print("Files read. Padding them for training.")
