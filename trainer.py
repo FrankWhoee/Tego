@@ -63,6 +63,7 @@ def getData(path="subtrees"):
     print("Finish adj stack")
     edg = np.stack(edg)
     edg.reshape((edg.shape[0], edg.shape[1], edg.shape[2], 1))
+    print(edg.shape)
     gc.collect()
     print("Finish edg stack")
     nod = np.stack(nod)
