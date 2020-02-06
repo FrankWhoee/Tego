@@ -69,12 +69,15 @@ print("Data acquired")
 # Parameters
 N = A.shape[1]  # Number of nodes in the graphs
 S = N  # Edge features dimensionality
-n_classes = 2  # Number of classes
-l2_reg = 5e-4  # Regularization rate for l2
-learning_rate = 1e-3  # Learning rate for Adam
-epochs = 20000  # Number of training epochs
-batch_size = 32  # Batch size
-es_patience = 200  # Patience fot early stopping
+dropout = 0.5           # Dropout rate applied to the features
+l2_reg = 5e-4           # Regularization rate for l2
+learning_rate = 1e-2    # Learning rate for SGD
+epochs = 20000          # Number of training epochs
+es_patience = 200       # Patience for early stopping
+
+
+A = utils.localpooling_filter(A)
+E = utils.localpooling_filter(E)
 
 # Train/test split
 A_train, A_test, \
@@ -82,12 +85,11 @@ e_train, e_test, \
 y_train, y_test = train_test_split(A, E, y, test_size=0.1)
 print("Training/testing split.")
 
-A = utils.localpooling_filter(A)
-E = utils.localpooling_filter(E)
+
 
 # Model definition
 E_in = Input(shape=(N, S), sparse=True)
-A_in = Input((N, N), sparse=True)
+A_in = Input(shape=(N, N), sparse=True)
 
 gc1 = GraphConv(16, activation='relu', kernel_regularizer=l2(l2_reg), use_bias=False)(E_in)
 gc2 = GraphConv(16, activation='relu', kernel_regularizer=l2(l2_reg), use_bias=False)(A_in)
