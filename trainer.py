@@ -94,8 +94,8 @@ X_in = Input(shape=(N, F))
 A_in = Input(shape=(N, N))
 E_in = Input(shape=(N, N, S))
 
-gc1 = EdgeConditionedConv(32, activation='relu')([X_in, A_in, E_in])
-gc2 = EdgeConditionedConv(32, activation='relu')([gc1, A_in, E_in])
+gc1 = EdgeConditionedConv(16, activation='relu')([X_in, A_in, E_in])
+gc2 = EdgeConditionedConv(16, activation='relu')([gc1, A_in, E_in])
 pool = GlobalAvgPool()(gc2)
 output = Dense(n_out)(pool)
 
