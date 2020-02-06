@@ -3,6 +3,7 @@ from Bio import Phylo
 from ete3 import Tree
 from meta import get as mget
 
+
 def to_distance_matrix(tree) -> np.ndarray:
     """Create a distance matrix (NumPy array) from clades/branches in tree.
 
@@ -51,6 +52,7 @@ def to_adjacency_matrix(tree) -> np.ndarray:
         adjmat += adjmat.transpose()
     return np.array(adjmat)
 
+
 def to_node_attributes(path) -> np.ndarray:
     result = []
     index_map = {
@@ -60,18 +62,21 @@ def to_node_attributes(path) -> np.ndarray:
         "Local branching index": 3,
         "Non-epitope mutations": 4,
         "ne_star": 5,
-        "RBS adjacent mutations": 6,
+        "RBS adjacent mutations": 6
     }
     node = Tree(path, format=3)
     for child in node.get_children():
-        attributes = mget(child.name)
-        node_matrix = np.full(7,-1)
+        attributes = mget(child.name,
+                          ["Antigenic advance (tree model)", "Antigenic advance (sub model)", "Epitope mutations",
+                           "Local branching index", "Non-epitope mutations", "ne_star", "RBS adjacent mutations"])
+        node_matrix = np.full(7, -1)
         for key in attributes.keys():
             node_matrix[index_map[key]] = attributes[key]
         result.append(node_matrix)
     return np.stack(result)
 
-def resize(array:np.ndarray, new_size):
+
+def resize(array: np.ndarray, new_size):
     new = np.zeros(new_size)
-    new[:array.shape[0],:array.shape[1]] = array
+    new[:array.shape[0], :array.shape[1]] = array
     return new
