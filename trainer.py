@@ -33,7 +33,7 @@ def getData(path="subtrees"):
     failed = 0
     for f in files:
         success = float(re.search("\((.*?)\)", f).group()[1:-1])
-        if (successful < failed and success > 1) or (failed < successful and success <= 1) or (failed == successful):
+        if (successful < failed and success == 1) or (failed < successful and success == 0) or (failed == successful):
             # print("Get " + str(i) + " out of " + str(len(files) - 1))
             A, X, E = nwkToNumpy('subtrees/' + f)
             adj.append(A)
@@ -44,7 +44,7 @@ def getData(path="subtrees"):
                 successful += 1
             else:
                 failed += 1
-    print("Got "  + str(successful) + " succesful trees and " + str(failed) + " failed trees.")
+    print("Got " + str(successful) + " succesful trees and " + str(failed) + " failed trees.")
     print("Files read. Padding them for training.")
     k = max([_.shape[-1] for _ in adj])
     for i in range(len(adj)):
