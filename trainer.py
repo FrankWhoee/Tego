@@ -40,7 +40,7 @@ def getData(path="subtrees"):
             nod.append(X)
             edg.append(E)
             y.append(success)
-            if success > 1:
+            if success == 1:
                 successful += 1
             else:
                 failed += 1
