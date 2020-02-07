@@ -100,14 +100,14 @@ X_train, X_test, \
 E_train, E_test, \
 y_train, y_test = train_test_split(A, X, E, y, test_size=0.1)
 
-a_train_file = open('a_train.np')
-x_train_file = open('x_train.np')
-e_train_file = open('e_train.np')
-y_train_file = open('y_train.np')
-a_test_file = open('a_test.np')
-x_test_file = open('x_test.np')
-e_test_file = open('e_test.np')
-y_test_file = open('y_test.np')
+a_train_file = open('a_train.np', 'w')
+x_train_file = open('x_train.np', 'w')
+e_train_file = open('e_train.np', 'w')
+y_train_file = open('y_train.np', 'w')
+a_test_file = open('a_test.np', 'w')
+x_test_file = open('x_test.np', 'w')
+e_test_file = open('e_test.np', 'w')
+y_test_file = open('y_test.np', 'w')
 
 np.save(a_train_file, A_train)
 np.save(x_train_file, X_train)
@@ -151,5 +151,5 @@ eval_results = model.evaluate([X_test, A_test, E_test],
 print('Done.\n'
       'Test loss: {}'.format(eval_results))
 
-model.save('tego-'+str(int(time.time()))+'.h5')
+model.save('tego-' + str(int(time.time())) + '.h5')
 print("Model saved.")
