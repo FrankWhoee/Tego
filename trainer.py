@@ -32,7 +32,7 @@ def getData(path="subtrees"):
     successful = 0
     failed = 0
     for f in files:
-        success = float(re.search("\((.*?)\)", f).group()[1:-1])
+        success = int(re.search("\((.*?)\)", f).group()[1:-1])
         if (successful < failed and success == 1) or (failed < successful and success == 0) or (failed == successful):
             # print("Get " + str(i) + " out of " + str(len(files) - 1))
             A, X, E = nwkToNumpy('subtrees/' + f)
