@@ -100,6 +100,24 @@ X_train, X_test, \
 E_train, E_test, \
 y_train, y_test = train_test_split(A, X, E, y, test_size=0.1)
 
+a_train_file = open('a_train.np')
+x_train_file = open('x_train.np')
+e_train_file = open('e_train.np')
+y_train_file = open('y_train.np')
+a_test_file = open('a_test.np')
+x_test_file = open('x_test.np')
+e_test_file = open('e_test.np')
+y_test_file = open('y_test.np')
+
+np.save(a_train_file, A_train)
+np.save(x_train_file, X_train)
+np.save(e_train_file, E_train)
+np.save(y_train_file, y_train)
+np.save(a_test_file, A_test)
+np.save(x_test_file, X_test)
+np.save(e_test_file, E_test)
+np.save(y_test_file, y_test)
+
 # Model definition
 X_in = Input(shape=(N, F))
 A_in = Input(shape=(N, N))
