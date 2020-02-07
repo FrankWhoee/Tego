@@ -44,6 +44,7 @@ def getData(path="subtrees"):
                 successful += 1
             else:
                 failed += 1
+    print("Got "  + str(successful) + " succesful trees and " + str(failed) + " failed trees.")
     print("Files read. Padding them for training.")
     k = max([_.shape[-1] for _ in adj])
     for i in range(len(adj)):
