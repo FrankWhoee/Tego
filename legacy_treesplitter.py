@@ -55,11 +55,10 @@ for node in tree.traverse("preorder"):
     success = getSuccess(node)
     if success == 1.0:
         fails += 1
-    avgSuccess += success
-    if success > 1:
-        score = "-(1)"
-    else:
         score = "-(0)"
+    else:
+        score = "-(1)"
+    avgSuccess += success
     temp.write(outfile="subtrees/" + str(i) + score + ".tego")
     i += 1
 print("Got " + str(i) + " subtrees")
