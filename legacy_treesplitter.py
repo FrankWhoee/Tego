@@ -1,28 +1,33 @@
-from Bio import Phylo
 from ete3 import Tree
+
 
 def trimNode(node: Tree, prevLength=0):
     for child in node.get_children():
-        if child.dist + prevLength >= 2:
+        if child.dist + prevLength >= 1:
             delDescendants(child)
         else:
             trimNode(child, prevLength=prevLength + child.dist)
 
-def delDescendants(node:Tree):
+
+def delDescendants(node: Tree):
     for desc in node.get_descendants():
         desc.delete()
 
-def getSuccess(node:Tree, prevLength=0):
+
+def getSuccess(node: Tree):
     trainNode = node.copy()
     trimNode(trainNode)
     initial = len(trainNode.get_descendants()) + 1
     future = node.copy()
     getSuccessHelper(future)
     final = len(future.get_descendants()) + 1
-    return final/initial
+    # if final != initial:
+    #     print(trainNode)
+    #     print(future)
+    return final / initial
 
 
-def getSuccessHelper(node:Tree, prevLength=0):
+def getSuccessHelper(node: Tree, prevLength=0):
     """
     Gets number of nodes within 3.4 years.
     :param node: The node that you want to get the success for
@@ -30,10 +35,11 @@ def getSuccessHelper(node:Tree, prevLength=0):
     :return:
     """
     for child in node.get_children():
-        if child.dist + prevLength > 20:
+        if child.dist + prevLength >= 3.7:
             delDescendants(child)
         else:
-            trimNode(child, prevLength=prevLength + child.dist)
+            getSuccessHelper(child, prevLength=prevLength + child.dist)
+
 
 subtrees = []
 tree = Tree("nextstrain_flu_seasonal_h3n2_ha_12y_timetree.nwk", format=3)
@@ -57,5 +63,5 @@ for node in tree.traverse("preorder"):
     temp.write(outfile="subtrees/" + str(i) + score + ".tego")
     i += 1
 print("Got " + str(i) + " subtrees")
-print("Average success is " + str(avgSuccess/i))
+print("Average success is " + str(avgSuccess / i))
 print(fails, "failed trees.")

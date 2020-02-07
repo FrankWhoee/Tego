@@ -29,13 +29,17 @@ def getData(path="subtrees"):
     nod = []
     edg = []
     files = os.listdir(path)
+    successful = 0
+    failed = 0
     for f in files:
-        # print("Get " + str(i) + " out of " + str(len(files) - 1))
-        A, X, E = nwkToNumpy('subtrees/' + f)
-        adj.append(A)
-        nod.append(X)
-        edg.append(E)
-        y.append(re.search("\((.*?)\)", f).group()[1:-1])
+        success = float(re.search("\((.*?)\)", f).group()[1:-1])
+        if (successful < failed and success > 1) or (failed < successful and success <= 1):
+            # print("Get " + str(i) + " out of " + str(len(files) - 1))
+            A, X, E = nwkToNumpy('subtrees/' + f)
+            adj.append(A)
+            nod.append(X)
+            edg.append(E)
+            y.append(success)
     print("Files read. Padding them for training.")
     k = max([_.shape[-1] for _ in adj])
     for i in range(len(adj)):
