@@ -40,6 +40,10 @@ def getData(path="subtrees"):
             nod.append(X)
             edg.append(E)
             y.append(success)
+            if success > 1:
+                successful += 1
+            else:
+                failed += 1
     print("Files read. Padding them for training.")
     k = max([_.shape[-1] for _ in adj])
     for i in range(len(adj)):
