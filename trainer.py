@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 from Bio import Phylo
 import os
@@ -131,5 +133,5 @@ eval_results = model.evaluate([X_test, A_test, E_test],
 print('Done.\n'
       'Test loss: {}'.format(eval_results))
 
-# Plot predictions
-preds = model.predict([X_test, A_test, E_test])
+model.save('tego-'+str(int(time.time()))+'.h5')
+print("Model saved.")
