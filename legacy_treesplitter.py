@@ -56,7 +56,7 @@ for node in tree.traverse("preorder"):
     if success == 1.0:
         fails += 1
     avgSuccess += success
-    if success > 0:
+    if success > 1:
         score = "-(1)"
     else:
         score = "-(0)"
