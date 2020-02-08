@@ -124,7 +124,7 @@ model = Model(inputs=[X_in, A_in, E_in], outputs=output)
 model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
 model.summary()
 
-checkpoint = ModelCheckpoint('tego-' + str(int(time.time())) + '.h5', monitor='loss', verbose=1, save_best_only=True, mode='min')
+checkpoint = ModelCheckpoint('tego-' + str(int(time.time())) + '.h5', monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 
 # Train model
 model.fit([X_train, A_train, E_train],
