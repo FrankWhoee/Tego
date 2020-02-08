@@ -103,10 +103,10 @@ y_train, y_test = train_test_split(A, X, E, y, test_size=0.1)
 # X_train.tofile('x_train.np')
 # E_train.tofile('e_train.np')
 # y_train.tofile('y_train.np')
-A_test.tofile('a_test'+str(A_test.shape)+'.np')
-X_test.tofile('x_test'+str(X_test.shape)+'.np')
-E_test.tofile('e_test'+str(E_test.shape)+'.np')
-y_test.tofile('y_test'+str(y_test.shape)+'.np')
+A_test.tofile('a_test' + str(A_test.shape) + '.np')
+X_test.tofile('x_test' + str(X_test.shape) + '.np')
+E_test.tofile('e_test' + str(E_test.shape) + '.np')
+y_test.tofile('y_test' + str(y_test.shape) + '.np')
 
 # Model definition
 X_in = Input(shape=(N, F))
@@ -141,17 +141,22 @@ eval_results = model.evaluate([X_test, A_test, E_test],
 print('Done.\n'
       'Test loss: {}'.format(eval_results))
 
+correct = 0
+total = 0
 try:
     for ain, xin, ein, yout in zip(A_test, X_test, E_test, y_test):
         ain = ain.reshape((1, 215, 215))
         xin = xin.reshape((1, 215, 7))
         ein = ein.reshape((1, 215, 215, 1))
-        prediction = model.predict(x=[xin,ain,ein])
+        prediction = model.predict(x=[xin, ain, ein])
         print("-------------------------")
         print("Prediction: " + str(prediction))
         print("Actual: " + str(yout))
+        total += 1
+        if (prediction[0][1] > prediction[0][0] and yout == 1) or (prediction[0][1] < prediction[0][0] and yout == 0):
+            correct += 1
+    print("Got " + str(correct) + " out of " + str(total))
 except:
     print("Error testing acc.")
 model.save_weights('tego-' + str(int(time.time())) + '.h5')
 print("Model saved.")
-
