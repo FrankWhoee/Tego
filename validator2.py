@@ -41,7 +41,7 @@ pool = GlobalAvgPool()(gc2)
 dense1 = Dense(32)(pool)
 dropout1 = Dropout(0.1)(dense1)
 dense2 = Dense(16)(dropout1)
-output = Dense(n_out)(dense1)
+output = Dense(n_out)(dense2)
 
 # Build model
 model = Model(inputs=[X_in, A_in, E_in], outputs=output)
