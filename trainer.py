@@ -7,12 +7,13 @@ import re
 from tego.util import to_adjacency_matrix, to_distance_matrix, to_node_attributes
 import gc
 import numpy as np
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.layers import Input, Dense
 from keras.models import Model
 from sklearn.model_selection import train_test_split
 from spektral.layers import EdgeConditionedConv, GlobalAvgPool
 from keras.optimizers import Adam
+from keras import regularizers
 print("Imported packages.")
 
 
@@ -123,15 +124,15 @@ model = Model(inputs=[X_in, A_in, E_in], outputs=output)
 model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
 model.summary()
 
+checkpoint = ModelCheckpoint('tego-' + str(int(time.time())) + '.h5', monitor='loss', verbose=1, save_best_only=True, mode='min')
+
 # Train model
 model.fit([X_train, A_train, E_train],
           y_train,
           batch_size=batch_size,
           validation_split=0.1,
           epochs=epochs,
-          callbacks=[
-              EarlyStopping(patience=es_patience, restore_best_weights=True)
-          ])
+          callbacks=[checkpoint])
 
 # Evaluate model
 print('Evaluating model.')
@@ -158,5 +159,3 @@ try:
     print("Got " + str(correct) + " out of " + str(total))
 except:
     print("Error testing acc.")
-model.save_weights('tego-' + str(int(time.time())) + '.h5')
-print("Model saved.")
