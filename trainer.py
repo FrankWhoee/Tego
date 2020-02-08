@@ -141,5 +141,15 @@ eval_results = model.evaluate([X_test, A_test, E_test],
 print('Done.\n'
       'Test loss: {}'.format(eval_results))
 
+for ain, xin, ein, yout in zip(A_test, X_test, E_test, y_test):
+    ain = ain.reshape((1, 215, 215))
+    xin = xin.reshape((1, 215, 7))
+    ein = ein.reshape((1, 215, 215, 1))
+    prediction = model.predict(x=[xin,ain,ein])
+    print("-------------------------")
+    print("Prediction: " + str(prediction))
+    print("Actual: " + str(yout))
+
 model.save_weights('tego-' + str(int(time.time())) + '.h5')
 print("Model saved.")
+
