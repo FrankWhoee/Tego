@@ -1,9 +1,10 @@
 import time
 from tego.util import getData, validate
 from keras.callbacks import ModelCheckpoint
-from keras.layers import Input, Dense
+from keras.layers import Input, Dense, Dropout
 from keras.models import Model
 from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
 from spektral.layers import EdgeConditionedConv, GlobalAvgPool
 from keras.optimizers import Adam
 
@@ -21,6 +22,8 @@ epochs = 50  # Number of training epochs
 batch_size = 8  # Batch size
 es_patience = 5  # Patience fot early stopping
 
+A,X,E,y = shuffle(A,X,E,y)
+
 # Train/test split
 A_train, A_test, \
 X_train, X_test, \
@@ -35,7 +38,9 @@ E_in = Input(shape=(N, N, S))
 gc1 = EdgeConditionedConv(16, activation='relu')([X_in, A_in, E_in])
 gc2 = EdgeConditionedConv(16, activation='relu')([gc1, A_in, E_in])
 pool = GlobalAvgPool()(gc2)
-dense1 = Dense(16)(pool)
+dense1 = Dense(32)(pool)
+dropout1 = Dropout(0.1)(dense1)
+dense2 = Dense(16)(dropout1)
 output = Dense(n_out)(dense1)
 
 # Build model
