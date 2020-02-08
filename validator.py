@@ -8,11 +8,10 @@ from spektral.layers import EdgeConditionedConv, GlobalAvgPool
 # Model definition
 from spektral.layers import EdgeConditionedConv
 
-A = np.fromfile("a_test.np")
-X = np.fromfile("a_test.np")
-E = np.fromfile("a_test.np")
-y = np.fromfile("a_test.np")
-
+A = np.fromfile("a_test(88, 215, 215).np").reshape((88, 215, 215))
+X = np.fromfile("x_test(88, 215, 7).np").reshape((88, 215, 7))
+E = np.fromfile("e_test(88, 215, 215, 1).np").reshape((88, 215, 215, 1))
+y = np.fromfile("y_test(88,).np").reshape((88))
 
 print(A.shape)
 
@@ -42,3 +41,11 @@ model.summary()
 
 model.load_weights('tego-1581113522.h5')
 
+for ain, xin, ein, yout in zip(A, X, E, y):
+    ain = ain.reshape((1, 215, 215))
+    xin = xin.reshape((1, 215, 7))
+    ein = ein.reshape((1, 215, 215, 1))
+    prediction = model.predict(x=[xin,ain,ein])
+    print("-------------------------")
+    print("Prediction: " + str(prediction))
+    print("Actual: " + str(yout))

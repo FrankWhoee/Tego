@@ -141,5 +141,5 @@ eval_results = model.evaluate([X_test, A_test, E_test],
 print('Done.\n'
       'Test loss: {}'.format(eval_results))
 
-model.save('tego-' + str(int(time.time())) + '.h5')
+model.save_weights('tego-' + str(int(time.time())) + '.h5')
 print("Model saved.")
