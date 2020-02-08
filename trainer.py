@@ -12,7 +12,7 @@ from keras.layers import Input, Dense
 from keras.models import Model
 from sklearn.model_selection import train_test_split
 from spektral.layers import EdgeConditionedConv, GlobalAvgPool
-
+from keras.optimizers import Adam
 print("Imported packages.")
 
 
@@ -120,7 +120,7 @@ output = Dense(n_out)(pool)
 
 # Build model
 model = Model(inputs=[X_in, A_in, E_in], outputs=output)
-model.compile(optimizer='Adam', loss='sparse_categorical_crossentropy')
+model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
 model.summary()
 
 # Train model

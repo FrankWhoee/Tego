@@ -39,13 +39,20 @@ model = Model(inputs=[X_in, A_in, E_in], outputs=output)
 model.compile(optimizer='Adam', loss='sparse_categorical_crossentropy')
 model.summary()
 
-model.load_weights('tego-1581113522.h5')
+model.load_weights('tego-1581134625.h5')
 
-for ain, xin, ein, yout in zip(A, X, E, y):
-    ain = ain.reshape((1, 215, 215))
-    xin = xin.reshape((1, 215, 7))
-    ein = ein.reshape((1, 215, 215, 1))
-    prediction = model.predict(x=[xin,ain,ein])
-    print("-------------------------")
-    print("Prediction: " + str(prediction))
-    print("Actual: " + str(yout))
+try:
+    for ain, xin, ein, yout in zip(A, X, E, y):
+        ain = ain.reshape((1, 215, 215))
+        xin = xin.reshape((1, 215, 7))
+        ein = ein.reshape((1, 215, 215, 1))
+        prediction = model.predict(x=[xin, ain, ein])
+        print("-------------------------")
+        print("Prediction: " + str(prediction))
+        print("Actual: " + str(yout))
+        total += 1
+        if (prediction[0][1] > prediction[0][0] and yout == 1) or (prediction[0][1] < prediction[0][0] and yout == 0):
+            correct += 1
+    print("Got " + str(correct) + " out of " + str(total))
+except:
+    print("Error testing acc.")
