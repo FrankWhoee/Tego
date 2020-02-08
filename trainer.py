@@ -63,4 +63,4 @@ print('Done.\n'
       'Test loss: {}'.format(eval_results))
 
 correct, total = validate(A_test,X_test,E_test,y_test,model)
-print("Got " + str(correct) + " out of " + (total))
+print("Got " + str(correct) + " out of " + str(total))
