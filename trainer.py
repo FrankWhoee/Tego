@@ -10,7 +10,6 @@ import numpy as np
 from keras.callbacks import EarlyStopping
 from keras.layers import Input, Dense
 from keras.models import Model
-from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 from spektral.layers import EdgeConditionedConv, GlobalAvgPool
 
@@ -100,14 +99,14 @@ X_train, X_test, \
 E_train, E_test, \
 y_train, y_test = train_test_split(A, X, E, y, test_size=0.1)
 
-A_train.tofile('a_train.np')
-X_train.tofile('x_train.np')
-E_train.tofile('e_train.np')
-y_train.tofile('y_train.np')
-A_test.tofile('a_test.np')
-X_test.tofile('x_test.np')
-E_test.tofile('e_test.np')
-y_test.tofile('y_test.np')
+# A_train.tofile('a_train.np')
+# X_train.tofile('x_train.np')
+# E_train.tofile('e_train.np')
+# y_train.tofile('y_train.np')
+A_test.tofile('a_test'+str(A_test.shape)+'.np')
+X_test.tofile('x_test'+str(X_test.shape)+'.np')
+E_test.tofile('e_test'+str(E_test.shape)+'.np')
+y_test.tofile('y_test'+str(y_test.shape)+'.np')
 
 # Model definition
 X_in = Input(shape=(N, F))
