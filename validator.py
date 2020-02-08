@@ -1,3 +1,5 @@
+import sys
+
 from keras.models import load_model
 import numpy as np
 import spektral
@@ -124,7 +126,7 @@ model = Model(inputs=[X_in, A_in, E_in], outputs=output)
 model.compile(optimizer='Adam', loss='sparse_categorical_crossentropy')
 model.summary()
 
-model.load_weights('tego-1581140233.h5')
+model.load_weights(sys.argv[1])
 total = 0
 correct = 0
 try:
