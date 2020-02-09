@@ -74,12 +74,15 @@ def to_node_attributes(path) -> np.ndarray:
         attributes = mget(child.name,
                           ["Antigenic advance (tree model)", "Antigenic advance (sub model)", "Epitope mutations",
                            "Local branching index", "Non-epitope mutations", "ne_star", "RBS adjacent mutations"])
-        node_matrix = np.full(7, -1)
+        node_matrix = np.full(7, -1, dtype=np.dtype(np.float))
         for key in attributes.keys():
             if math.isnan(attributes[key]):
                 node_matrix[index_map[key]] = -1
             else:
                 node_matrix[index_map[key]] = attributes[key]
+                if attributes[key] < 1:
+                    print(node_matrix[index_map[key]])
+                    print(attributes[key])
         result.append(node_matrix)
     return np.stack(result)
 
