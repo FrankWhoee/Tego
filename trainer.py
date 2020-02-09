@@ -12,6 +12,7 @@ print("Imported packages.")
 
 A, X, E, y = getData()
 print("Data acquired")
+print(X)
 # Parameters
 N = X.shape[-2]  # Number of nodes in the graphs
 F = X.shape[-1]  # Node features dimensionality
@@ -23,6 +24,8 @@ batch_size = 8  # Batch size
 es_patience = 5  # Patience fot early stopping
 
 A,X,E,y = shuffle(A,X,E,y)
+
+print(X)
 
 # Train/test split
 A_train, A_test, \

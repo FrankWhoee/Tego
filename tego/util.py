@@ -80,9 +80,6 @@ def to_node_attributes(path) -> np.ndarray:
                 node_matrix[index_map[key]] = -1
             else:
                 node_matrix[index_map[key]] = attributes[key]
-                if attributes[key] < 1:
-                    print(node_matrix[index_map[key]])
-                    print(attributes[key])
         result.append(node_matrix)
     return np.stack(result)
 
@@ -138,7 +135,7 @@ def getData(path="subtrees"):
     print("Edg Padded.")
     for i in range(len(nod)):
         matrix = nod[i]
-        temp = np.full((k, matrix.shape[1]), -1)
+        temp = np.full((k, matrix.shape[1]), -1, dtype=np.dtype(np.float))
         temp[:matrix.shape[0], :matrix.shape[1]] = matrix
         nod[i] = temp
     print("Nod Padded.")
