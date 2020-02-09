@@ -32,24 +32,6 @@ X_train, X_test, \
 E_train, E_test, \
 y_train, y_test = train_test_split(A, X, E, y, test_size=0.1)
 
-A, X, E, y = getData()
-print("Data acquired")
-# Parameters
-N = X.shape[-2]  # Number of nodes in the graphs
-F = X.shape[-1]  # Node features dimensionality
-S = E.shape[-1]  # Edge features dimensionality
-n_out = 2  # Dimensionality of the target
-learning_rate = 1e-3  # Learning rate for SGD
-epochs = 25  # Number of training epochs
-batch_size = 8  # Batch size
-es_patience = 5  # Patience fot early stopping
-
-# Train/test split
-A_train, A_test, \
-X_train, X_test, \
-E_train, E_test, \
-y_train, y_test = train_test_split(A, X, E, y, test_size=0.1)
-
 # Model definition
 X_in = Input(shape=(N, F))
 A_in = Input(shape=(N, N))
