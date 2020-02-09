@@ -48,7 +48,7 @@ from keras.optimizers import SGD
 
 # Build model
 model = Model(inputs=[X_in, A_in, E_in], outputs=output)
-model.compile(optimizer=Adam(lr=0.0001, clipvalue=0.5), loss='sparse_categorical_crossentropy')
+model.compile(optimizer=Adam(lr=0.1, clipvalue=0.5), loss='sparse_categorical_crossentropy')
 model.summary()
 
 checkpoint = ModelCheckpoint('tego-' + str(int(time.time())) + '.h5', monitor='val_loss', verbose=1,
