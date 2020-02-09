@@ -39,13 +39,14 @@ gc1 = EdgeConditionedConv(16, activation='relu')([X_in, A_in, E_in])
 gc2 = EdgeConditionedConv(16, activation='relu')([gc1, A_in, E_in])
 pool = GlobalAvgPool()(gc2)
 dense1 = Dense(32)(pool)
-dropout1 = Dropout(0.1)(dense1)
-dense2 = Dense(16)(dropout1)
-output = Dense(n_out)(dense1)
+# dropout1 = Dropout(0.1)(dense1)
+dense2 = Dense(16)(dense1)
+dense3 = Dense(8)(dense2)
+output = Dense(n_out)(dense3)
 
 # Build model
 model = Model(inputs=[X_in, A_in, E_in], outputs=output)
-model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
+model.compile(optimizer=Adam(), loss='sparse_categorical_crossentropy')
 model.summary()
 
 checkpoint = ModelCheckpoint('tego-' + str(int(time.time())) + '.h5', monitor='val_loss', verbose=1,
