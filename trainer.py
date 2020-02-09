@@ -12,7 +12,7 @@ print("Imported packages.")
 
 A, X, E, y = getData()
 print("Data acquired")
-print(X)
+
 # Parameters
 N = X.shape[-2]  # Number of nodes in the graphs
 F = X.shape[-1]  # Node features dimensionality
@@ -23,7 +23,7 @@ epochs = 50  # Number of training epochs
 batch_size = 8  # Batch size
 es_patience = 5  # Patience fot early stopping
 
-A,X,E,y = shuffle(A,X,E,y)
+# A,X,E,y = shuffle(A,X,E,y)
 
 print(X)
 
@@ -41,7 +41,9 @@ E_in = Input(shape=(N, N, S))
 gc1 = EdgeConditionedConv(16, activation='relu')([X_in, A_in, E_in])
 gc2 = EdgeConditionedConv(16, activation='relu')([gc1, A_in, E_in])
 pool = GlobalAvgPool()(gc2)
-output = Dense(n_out)(pool)
+dense1 = Dense(64)(pool)
+dropout1 = Dropout(0.5)(dense1)
+output = Dense(n_out)(dropout1)
 
 # Build model
 model = Model(inputs=[X_in, A_in, E_in], outputs=output)
