@@ -46,7 +46,7 @@ output = Dense(n_out)(dense3)
 
 # Build model
 model = Model(inputs=[X_in, A_in, E_in], outputs=output)
-model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
+model.compile(optimizer=Adam(), loss='sparse_categorical_crossentropy')
 model.summary()
 
 import sys
