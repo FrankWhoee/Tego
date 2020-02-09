@@ -46,7 +46,7 @@ output = Dense(n_out)(pool)
 
 from keras.optimizers import SGD
 
-opt = SGD(lr=0.01, momentum=0.9, decay=0.1)
+opt = SGD(lr=0.001, momentum=1.5, decay=0.01)
 
 # Build model
 model = Model(inputs=[X_in, A_in, E_in], outputs=output)
