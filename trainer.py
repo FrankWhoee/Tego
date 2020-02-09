@@ -22,7 +22,7 @@ epochs = 50  # Number of training epochs
 batch_size = 8  # Batch size
 es_patience = 5  # Patience fot early stopping
 
-# A,X,E,y = shuffle(A,X,E,y)
+A,X,E,y = shuffle(A,X,E,y)
 
 print(X)
 
