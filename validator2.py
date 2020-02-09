@@ -35,16 +35,14 @@ X_in = Input(shape=(N, F))
 A_in = Input(shape=(N, N))
 E_in = Input(shape=(N, N, S))
 
-gc1 = EdgeConditionedConv(16, activation='relu')([X_in, A_in, E_in])
-gc2 = EdgeConditionedConv(16, activation='relu')([gc1, A_in, E_in])
+gc1 = EdgeConditionedConv(30, activation='relu')([X_in, A_in, E_in])
+gc2 = EdgeConditionedConv(30, activation='relu')([gc1, A_in, E_in])
 pool = GlobalAvgPool()(gc2)
-dense1 = Dense(64)(pool)
-dropout1 = Dropout(0.5)(dense1)
-output = Dense(n_out)(dropout1)
+output = Dense(n_out)(pool)
 
 # Build model
 model = Model(inputs=[X_in, A_in, E_in], outputs=output)
-model.compile(optimizer=Adam(), loss='sparse_categorical_crossentropy')
+model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
 model.summary()
 
 import sys
