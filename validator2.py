@@ -1,5 +1,5 @@
 import time
-from tego.util import getData, validate
+from tego.util import getData, validate, cross_validate
 from keras.callbacks import ModelCheckpoint
 from keras.layers import Input, Dense, Dropout
 from keras.models import Model
@@ -50,3 +50,5 @@ import sys
 model.load_weights(sys.argv[1])
 correct, total = validate(A_test, X_test, E_test, y_test, model)
 print("Got " + str(correct) + " out of " + str(total))
+
+cross_validate(A_test, X_test, E_test, y_test)

@@ -7,6 +7,7 @@ import os
 import re
 import gc
 
+
 def to_distance_matrix(tree) -> np.ndarray:
     """Create a distance matrix (NumPy array) from clades/branches in tree.
 
@@ -89,6 +90,7 @@ def resize(array: np.ndarray, new_size):
     new[:array.shape[0], :array.shape[1]] = array
     return new
 
+
 def nwkToNumpy(path) -> (np.ndarray, np.ndarray):
     tree = Phylo.read(path, "newick")
     A = to_adjacency_matrix(tree)
@@ -153,10 +155,11 @@ def getData(path="subtrees"):
     y = np.array(y)
     return adj, nod, edg, y
 
-def validate(A,X,E,y, model, verbose=0):
+
+def validate(A, X, E, y, model, verbose=0):
     total = 0
     correct = 0
-    for ain, xin, ein, yout in zip(A,X,E,y):
+    for ain, xin, ein, yout in zip(A, X, E, y):
         ain = ain.reshape((1, ain.shape[0], ain.shape[1]))
         xin = xin.reshape((1, xin.shape[0], xin.shape[1]))
         ein = ein.reshape((1, ein.shape[0], ein.shape[1], ein.shape[2]))
@@ -171,3 +174,54 @@ def validate(A,X,E,y, model, verbose=0):
                 prediction[0][1] < prediction[0][0] and yout == 0):
             correct += 1
     return correct, total
+
+
+def cross_validate(A, X, E, y):
+    from tego.util import getData, validate
+    from keras.callbacks import ModelCheckpoint
+    from keras.layers import Input, Dense, Dropout
+    from keras.models import Model
+    from sklearn.model_selection import train_test_split
+    from sklearn.utils import shuffle
+    from spektral.layers import EdgeConditionedConv, GlobalAvgPool
+    from keras.optimizers import Adam
+    from sklearn.model_selection import StratifiedKFold
+    import numpy as np
+    seed = 7
+    np.random.seed(seed)
+    kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=seed)
+    cvscores = []
+    for train, test in kfold.split([X, A, E], y):
+        # Parameters
+        N = X.shape[-2]  # Number of nodes in the graphs
+        F = X.shape[-1]  # Node features dimensionality
+        S = E.shape[-1]  # Edge features dimensionality
+        n_out = 2  # Dimensionality of the target
+        epochs = 5  # Number of training epochs
+        batch_size = 8  # Batch size
+        # Model definition
+        X_in = Input(shape=(N, F))
+        A_in = Input(shape=(N, N))
+        E_in = Input(shape=(N, N, S))
+
+        gc1 = EdgeConditionedConv(30, activation='relu')([X_in, A_in, E_in])
+        gc2 = EdgeConditionedConv(30, activation='relu')([gc1, A_in, E_in])
+        pool = GlobalAvgPool()(gc2)
+        output = Dense(n_out)(pool)
+
+        # Build model
+        model = Model(inputs=[X_in, A_in, E_in], outputs=output)
+        model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
+        model.summary()
+
+        # Train model
+        model.fit([X[train], A[train], E[train]],
+                  y[train],
+                  batch_size=batch_size,
+                  validation_split=0.1,
+                  epochs=epochs)
+        # evaluate the model
+        scores = model.evaluate([X[train], A[train], E[train]],y[train], verbose=0)
+        print("%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
+        cvscores.append(scores[1] * 100)
+    print("%.2f%% (+/- %.2f%%)" % (np.mean(cvscores), np.std(cvscores)))
