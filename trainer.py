@@ -44,9 +44,13 @@ pool = GlobalAvgPool()(gc2)
 # dropout1 = Dropout(0.5)(dense1)
 output = Dense(n_out)(pool)
 
+from keras.optimizers import SGD
+
+opt = SGD(lr=0.01, momentum=0.9, decay=0.01)
+
 # Build model
 model = Model(inputs=[X_in, A_in, E_in], outputs=output)
-model.compile(optimizer=Adam(), loss='sparse_categorical_crossentropy')
+model.compile(optimizer=opt, loss='sparse_categorical_crossentropy')
 model.summary()
 
 checkpoint = ModelCheckpoint('tego-' + str(int(time.time())) + '.h5', monitor='val_loss', verbose=1,
