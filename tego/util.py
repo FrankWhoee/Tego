@@ -195,8 +195,8 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
     batch_size = 8  # Batch size
     k_folds = 5
     i = 0
-    data_size = A_train.shape[0])
-    print("{} points of data.".format(data_size)
+    data_size = A_train.shape[0]
+    print("{} points of data.".format(data_size))
     while i < data_size:
         # Model definition
         X_in = Input(shape=(N, F))
