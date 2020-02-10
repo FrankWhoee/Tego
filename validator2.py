@@ -30,6 +30,8 @@ X_train, X_test, \
 E_train, E_test, \
 y_train, y_test = train_test_split(A, X, E, y, test_size=0.1)
 
+print(A_train.shape)
+
 # Model definition
 X_in = Input(shape=(N, F))
 A_in = Input(shape=(N, N))
