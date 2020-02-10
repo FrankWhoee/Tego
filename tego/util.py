@@ -187,9 +187,9 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
     np.random.seed(seed)
     cvscores = []
     # Parameters
-    N = X_test.shape[-2]  # Number of nodes in the graphs
-    F = X_test.shape[-1]  # Node features dimensionality
-    S = E_test.shape[-1]  # Edge features dimensionality
+    N = X_train.shape[-2]  # Number of nodes in the graphs
+    F = X_train.shape[-1]  # Node features dimensionality
+    S = E_train.shape[-1]  # Edge features dimensionality
     n_out = 2  # Dimensionality of the target
     epochs = 10  # Number of training epochs
     batch_size = 8  # Batch size
