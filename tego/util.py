@@ -184,7 +184,7 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
     from sklearn.model_selection import StratifiedKFold
     import numpy as np
     seed = 7
-    numpy.random.seed(seed)
+    np.random.seed(seed)
     cvscores = []
     # Parameters
     N = X_test.shape[-2]  # Number of nodes in the graphs
