@@ -195,8 +195,9 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
     batch_size = 8  # Batch size
     k_folds = 5
     i = 0
-    print("{} points of data.".format(A_train.shape[0]))
-    while i < A_train.shape[0]:
+    data_size = A_train.shape[0])
+    print("{} points of data.".format(data_size)
+    while i < data_size:
         # Model definition
         X_in = Input(shape=(N, F))
         A_in = Input(shape=(N, N))
@@ -210,7 +211,7 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
         # Build model
         model = Model(inputs=[X_in, A_in, E_in], outputs=output)
         model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
-        end = int(i + N/k_folds)
+        end = int(i + data_size/k_folds)
         print("Getting {} to {}".format(i, end))
         # Train model
         model.fit([X_train[i: end], A_train[i: end], E_train[i: end]],
@@ -221,5 +222,5 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
         correct, total = validate( A_test,X_test, E_test, y_test, model)
         print("%s: %.2f%%" % ("accuracy", (correct/total) * 100))
         cvscores.append((correct/total) * 100)
-        i += int(N/k_folds)
+        i += int(data_size/k_folds)
     print("%.2f%% (+/- %.2f%%)" % (np.mean(cvscores), np.std(cvscores)))
