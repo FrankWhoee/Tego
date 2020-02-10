@@ -157,6 +157,10 @@ def getData(path="subtrees"):
 
 
 def validate(A, X, E, y, model, verbose=0):
+    from sklearn.metrics import roc_curve
+    from sklearn.metrics import auc
+    actual = []
+    pred = []
     total = 0
     correct = 0
     for ain, xin, ein, yout in zip(A, X, E, y):
@@ -173,6 +177,11 @@ def validate(A, X, E, y, model, verbose=0):
         if (prediction[0][1] > prediction[0][0] and yout == 1) or (
                 prediction[0][1] < prediction[0][0] and yout == 0):
             correct += 1
+        actual.append(yout)
+        pred.append(1 if prediction[0][1] > prediction[0][0] else 0)
+    fpr_keras, tpr_keras, thresholds_keras = roc_curve(actual,pred)
+    auc_keras = auc(fpr_keras, tpr_keras)
+    print(auc_keras)
     return correct, total
 
 
