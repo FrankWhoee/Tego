@@ -47,8 +47,8 @@ model.summary()
 
 import sys
 
-# model.load_weights(sys.argv[1])
-# correct, total = validate(A_test, X_test, E_test, y_test, model)
-# print("Got " + str(correct) + " out of " + str(total))
+model.load_weights(sys.argv[1])
+correct, total = validate(A_test, X_test, E_test, y_test, model)
+print("Got " + str(correct) + " out of " + str(total))
 
 cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y_test)
