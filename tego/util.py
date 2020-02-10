@@ -204,7 +204,7 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
     n_out = 2  # Dimensionality of the target
     epochs = 10  # Number of training epochs
     batch_size = 8  # Batch size
-    k_folds = 5
+    k_folds = 6
     i = 0
     data_size = A_train.shape[0]
     print("{} points of data.".format(data_size))
