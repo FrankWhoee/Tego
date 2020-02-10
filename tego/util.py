@@ -189,7 +189,7 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
     F = X_test.shape[-1]  # Node features dimensionality
     S = E_test.shape[-1]  # Edge features dimensionality
     n_out = 2  # Dimensionality of the target
-    epochs = 5  # Number of training epochs
+    epochs = 10  # Number of training epochs
     batch_size = 8  # Batch size
 
     i = 0
@@ -208,11 +208,11 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
         model = Model(inputs=[X_in, A_in, E_in], outputs=output)
         model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
         end = int(i + N/10)
+        print("Getting {} to {}".format(i, end))
         # Train model
         model.fit([X_train[i: end], A_train[i: end], E_train[i: end]],
                   y_train[i: end],
                   batch_size=batch_size,
-                  validation_split=0.1,
                   epochs=epochs)
         # evaluate the model
         correct, total = validate( A_test,X_test, E_test, y_test, model)
