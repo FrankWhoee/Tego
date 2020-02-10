@@ -194,7 +194,6 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
 
     i = 0
     while i < N:
-
         # Model definition
         X_in = Input(shape=(N, F))
         A_in = Input(shape=(N, N))
@@ -208,7 +207,6 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
         # Build model
         model = Model(inputs=[X_in, A_in, E_in], outputs=output)
         model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
-        model.summary()
         end = int(i + N/10)
         # Train model
         model.fit([X_train[i: end], A_train[i: end], E_train[i: end]],
@@ -217,7 +215,7 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
                   validation_split=0.1,
                   epochs=epochs)
         # evaluate the model
-        correct, total = validate(X_test, A_test, E_test, y_test, model)
+        correct, total = validate( A_test,X_test, E_test, y_test, model)
         print("%s: %.2f%%" % ("accuracy", (correct/total) * 100))
         cvscores.append((correct/total) * 100)
         i += int(N/10)
