@@ -176,29 +176,24 @@ def validate(A, X, E, y, model, verbose=0):
     return correct, total
 
 
-def cross_validate(A, X, E, y):
-    from tego.util import getData, validate
-    from keras.callbacks import ModelCheckpoint
+def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y_test):
     from keras.layers import Input, Dense, Dropout
     from keras.models import Model
-    from sklearn.model_selection import train_test_split
-    from sklearn.utils import shuffle
     from spektral.layers import EdgeConditionedConv, GlobalAvgPool
     from keras.optimizers import Adam
     from sklearn.model_selection import StratifiedKFold
     import numpy as np
-    seed = 7
-    np.random.seed(seed)
-    kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=seed)
     cvscores = []
-    for train, test in kfold.split([X, A, E], y):
-        # Parameters
-        N = X.shape[-2]  # Number of nodes in the graphs
-        F = X.shape[-1]  # Node features dimensionality
-        S = E.shape[-1]  # Edge features dimensionality
-        n_out = 2  # Dimensionality of the target
-        epochs = 5  # Number of training epochs
-        batch_size = 8  # Batch size
+    # Parameters
+    N = X_test.shape[-2]  # Number of nodes in the graphs
+    F = X_test.shape[-1]  # Node features dimensionality
+    S = E_test.shape[-1]  # Edge features dimensionality
+    n_out = 2  # Dimensionality of the target
+    epochs = 5  # Number of training epochs
+    batch_size = 8  # Batch size
+
+    for i in range(N):
+
         # Model definition
         X_in = Input(shape=(N, F))
         A_in = Input(shape=(N, N))
@@ -215,13 +210,14 @@ def cross_validate(A, X, E, y):
         model.summary()
 
         # Train model
-        model.fit([X[train], A[train], E[train]],
-                  y[train],
+        model.fit([X_train[i: i + N/10], A_train[i: i + N/10], E_train[i: i + N/10]],
+                  y_train[i: i + N/10],
                   batch_size=batch_size,
                   validation_split=0.1,
                   epochs=epochs)
         # evaluate the model
-        scores = model.evaluate([X[train], A[train], E[train]],y[train], verbose=0)
-        print("%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
-        cvscores.append(scores[1] * 100)
+        correct, total = validate(X_test, A_test, E_test, y_test, model)
+        print("%s: %.2f%%" % ("accuracy", (correct/total) * 100))
+        cvscores.append((correct/total) * 100)
+        i += N/10
     print("%.2f%% (+/- %.2f%%)" % (np.mean(cvscores), np.std(cvscores)))
