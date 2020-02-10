@@ -181,7 +181,9 @@ def validate(A, X, E, y, model, verbose=0):
         pred.append(1 if prediction[0][1] > prediction[0][0] else 0)
     fpr_keras, tpr_keras, thresholds_keras = roc_curve(actual,pred)
     auc_keras = auc(fpr_keras, tpr_keras)
-    print(auc_keras)
+    print("AUC: " + auc_keras)
+    print("FPR: " + fpr_keras)
+    print("TPR: " + tpr_keras)
     return correct, total
 
 
