@@ -22,7 +22,7 @@ epochs = 50  # Number of training epochs
 batch_size = 8  # Batch size
 es_patience = 5  # Patience fot early stopping
 
-A,X,E,y = shuffle(A,X,E,y)
+A, X, E, y = shuffle(A, X, E, y)
 
 print(X)
 
@@ -66,5 +66,5 @@ eval_results = model.evaluate([X_test, A_test, E_test],
 print('Done.\n'
       'Test loss: {}'.format(eval_results))
 
-correct, total = validate(A_test,X_test,E_test,y_test,model)
+correct, total = validate(A_test, X_test, E_test, y_test, model)
 print("Got " + str(correct) + " out of " + str(total))
