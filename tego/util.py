@@ -212,6 +212,8 @@ def cross_validate(a,x,e,y):
     i = 0
     data_size = a.shape[0]
     print("{} points of data.".format(data_size))
+    seed = 7
+    np.random.seed(seed)
     while i <= int(data_size/k_folds) * (k_folds - 1):
         # Model definition
         X_in = Input(shape=(N, F))
