@@ -239,6 +239,11 @@ def cross_validate(a,x,e,y):
         E_test = e[i:end]
         y_test = y[i:end]
 
+        print(X.shape)
+        print(A.shape)
+        print(E.shape)
+        print(y.shape)
+
         # Train model
         model.fit([X,A,E],
                   Y,
