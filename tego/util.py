@@ -239,9 +239,9 @@ def cross_validate(a,x,e,y):
         E_test = e[i:end]
         y_test = y[i:end]
 
-        print(X.shape)
-        print(A.shape)
-        print(E.shape)
+        print(x.shape)
+        print(a.shape)
+        print(e.shape)
         print(y.shape)
 
         # Train model
