@@ -159,6 +159,7 @@ def getData(path="subtrees"):
 def validate(A, X, E, y, model, verbose=0):
     from sklearn.metrics import roc_curve
     from sklearn.metrics import auc
+    from matplotlib import pyplot as plt
     actual = []
     pred = []
     total = 0
@@ -179,34 +180,37 @@ def validate(A, X, E, y, model, verbose=0):
             correct += 1
         actual.append(yout)
         pred.append(1 if prediction[0][1] > prediction[0][0] else 0)
+    print(actual)
+    print(pred)
     fpr_keras, tpr_keras, thresholds_keras = roc_curve(actual,pred)
-    auc_keras = auc(fpr_keras, tpr_keras)
-    print("AUC: " + str(auc_keras))
     print("FPR: " + str(fpr_keras))
     print("TPR: " + str(tpr_keras))
+    print(thresholds_keras)
+    auc_keras = auc(fpr_keras, tpr_keras)
+    plt.plot(fpr_keras, tpr_keras)
+    plt.savefig("auc-roc.png")
+    print("AUC: " + str(auc_keras))
     return correct, total
 
 
-def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y_test):
+def cross_validate(a,x,e,y):
     from keras.layers import Input, Dense, Dropout
     from keras.models import Model
     from spektral.layers import EdgeConditionedConv, GlobalAvgPool
     from keras.optimizers import Adam
     from sklearn.model_selection import StratifiedKFold
     import numpy as np
-    seed = 7
-    np.random.seed(seed)
     cvscores = []
     # Parameters
-    N = X_train.shape[-2]  # Number of nodes in the graphs
-    F = X_train.shape[-1]  # Node features dimensionality
-    S = E_train.shape[-1]  # Edge features dimensionality
+    N = a.shape[-2]  # Number of nodes in the graphs
+    F = x.shape[-1]  # Node features dimensionality
+    S = e.shape[-1]  # Edge features dimensionality
     n_out = 2  # Dimensionality of the target
     epochs = 10  # Number of training epochs
     batch_size = 8  # Batch size
     k_folds = 6
     i = 0
-    data_size = A_train.shape[0]
+    data_size = a.shape[0]
     print("{} points of data.".format(data_size))
     while i <= int(data_size/k_folds) * (k_folds - 1):
         # Model definition
@@ -224,9 +228,20 @@ def cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y
         model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
         end = int(i + data_size/k_folds)
         print("Getting {} to {}".format(i, end))
+
+        X = np.delete(x,range(i,end))
+        A = np.delete(a, range(i, end))
+        E = np.delete(e, range(i, end))
+        Y = np.delete(y, range(i, end))
+
+        X_test = x[i:end]
+        A_test = a[i:end]
+        E_test = e[i:end]
+        y_test = y[i:end]
+
         # Train model
-        model.fit([X_train[i: end], A_train[i: end], E_train[i: end]],
-                  y_train[i: end],
+        model.fit([X,A,E],
+                  Y,
                   batch_size=batch_size,
                   epochs=epochs)
         # evaluate the model

@@ -7,7 +7,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 from spektral.layers import EdgeConditionedConv, GlobalAvgPool
 from keras.optimizers import Adam
-
+import numpy as np
+seed = 7
+np.random.seed(seed)
 print("Imported packages.")
 
 A, X, E, y = getData()
@@ -51,4 +53,4 @@ model.load_weights(sys.argv[1])
 correct, total = validate(A_test, X_test, E_test, y_test, model)
 print("Got " + str(correct) + " out of " + str(total))
 
-cross_validate(A_train, X_train, E_train, y_train, A_test, X_test, E_test, y_test)
+cross_validate(A,X,E,y)
