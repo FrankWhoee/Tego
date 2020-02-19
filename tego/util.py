@@ -229,20 +229,20 @@ def cross_validate(a,x,e,y):
         end = int(i + data_size/k_folds)
         print("Getting {} to {}".format(i, end))
 
-        X = np.delete(x,range(i,end))
-        A = np.delete(a, range(i, end))
-        E = np.delete(e, range(i, end))
-        Y = np.delete(y, range(i, end))
+        X = np.delete(x, range(i,end), 0)
+        A = np.delete(a, range(i, end), 0)
+        E = np.delete(e, range(i, end), 0)
+        Y = np.delete(y, range(i, end), 0)
 
         X_test = x[i:end]
         A_test = a[i:end]
         E_test = e[i:end]
         y_test = y[i:end]
 
-        print(x[0])
-        print(a.shape)
-        print(e.shape)
-        print(y.shape)
+        print(X.shape)
+        print(A.shape)
+        print(E.shape)
+        print(Y.shape)
 
         # Train model
         model.fit([X,A,E],
