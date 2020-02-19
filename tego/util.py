@@ -229,17 +229,18 @@ def cross_validate(a,x,e,y):
         model = Model(inputs=[X_in, A_in, E_in], outputs=output)
         model.compile(optimizer=Adam(lr=.00004, clipnorm=1.), loss='sparse_categorical_crossentropy')
         end = int(i + data_size/k_folds)
+        end2 = int(end + data_size / k_folds)
         print("Getting {} to {}".format(i, end))
 
-        X = np.delete(x, range(i,end), 0)
-        A = np.delete(a, range(i, end), 0)
-        E = np.delete(e, range(i, end), 0)
-        Y = np.delete(y, range(i, end), 0)
+        X = x[i:end]
+        A = a[i:end]
+        E = e[i:end]
+        Y = y[i:end]
 
-        X_test = x[i:end]
-        A_test = a[i:end]
-        E_test = e[i:end]
-        y_test = y[i:end]
+        X_test = x[end:end2]
+        A_test = a[end:end2]
+        E_test = e[end:end2]
+        y_test = y[end:end2]
 
         print(X.shape)
         print(A.shape)
